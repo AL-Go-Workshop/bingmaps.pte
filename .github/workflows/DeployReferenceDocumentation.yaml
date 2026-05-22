@@ -11,7 +11,7 @@ permissions:
 
 defaults:
   run:
-    shell: pwsh
+    shell: powershell
 
 env:
   ALGoOrgSettings: ${{ vars.ALGoOrgSettings }}
@@ -19,62 +19,69 @@ env:
 
 jobs:
   DeployALDoc:
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ windows-latest ]
     name: Deploy Reference Documentation
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Initialize the workflow
         id: init
-        uses: microsoft/AL-Go/Actions/WorkflowInitialize@32e66d69cfd2c1e3eca39e416e27c6aa58de6df3
+        uses: microsoft/AL-Go/Actions/WorkflowInitialize@d6059b86a7774031d5c41ca64a9efd4160c1c057
         with:
-          shell: pwsh
+          shell: powershell
 
       - name: Read settings
-        uses: microsoft/AL-Go/Actions/ReadSettings@32e66d69cfd2c1e3eca39e416e27c6aa58de6df3
+        uses: microsoft/AL-Go/Actions/ReadSettings@d6059b86a7774031d5c41ca64a9efd4160c1c057
         with:
-          shell: pwsh
+          shell: powershell
+
+      - name: Determine ArtifactUrl
+        id: determineArtifactUrl
+        uses: microsoft/AL-Go/Actions/DetermineArtifactUrl@d6059b86a7774031d5c41ca64a9efd4160c1c057
+        with:
+          shell: powershell
 
       - name: Determine Deployment Environments
         id: DetermineDeploymentEnvironments
-        uses: microsoft/AL-Go/Actions/DetermineDeploymentEnvironments@32e66d69cfd2c1e3eca39e416e27c6aa58de6df3
+        uses: microsoft/AL-Go/Actions/DetermineDeploymentEnvironments@d6059b86a7774031d5c41ca64a9efd4160c1c057
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          shell: pwsh
+          shell: powershell
           getEnvironments: 'github-pages'
           type: 'Publish'
 
       - name: Setup Pages
         if: steps.DetermineDeploymentEnvironments.outputs.deployALDocArtifact == 1
-        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 
       - name: Build Reference Documentation
-        uses: microsoft/AL-Go/Actions/BuildReferenceDocumentation@32e66d69cfd2c1e3eca39e416e27c6aa58de6df3
+        uses: microsoft/AL-Go/Actions/BuildReferenceDocumentation@d6059b86a7774031d5c41ca64a9efd4160c1c057
         with:
-          shell: pwsh
+          shell: powershell
           artifacts: 'latest'
+          artifactUrl: ${{ env.artifact }}
 
       - name: Upload pages artifact
-        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: ".aldoc/_site/"
 
       - name: Deploy to GitHub Pages
         if: steps.DetermineDeploymentEnvironments.outputs.deployALDocArtifact == 1
         id: deployment
-        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
 
       - name: Finalize the workflow
         if: always()
-        uses: microsoft/AL-Go/Actions/WorkflowPostProcess@32e66d69cfd2c1e3eca39e416e27c6aa58de6df3
+        uses: microsoft/AL-Go/Actions/WorkflowPostProcess@d6059b86a7774031d5c41ca64a9efd4160c1c057
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          shell: pwsh
+          shell: powershell
           telemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
           currentJobContext: ${{ toJson(job) }}
