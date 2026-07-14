@@ -1,10 +1,10 @@
 {
-  "$schema": "https://raw.githubusercontent.com/microsoft/AL-Go/32e66d69cfd2c1e3eca39e416e27c6aa58de6df3/Actions/.Modules/settings.schema.json",
+  "$schema": "https://raw.githubusercontent.com/microsoft/AL-Go/16948d91ca57e875e3d823536bac740c0ca1fdbd/Actions/.Modules/settings.schema.json",
   "type": "PTE",
   "templateUrl": "https://github.com/microsoft/AL-Go-PTE@preview",
   "ALDoc": {
     "ContinuousDeployment": true,
     "MaxReleases": 0
   },
-  "templateSha": "8edc212cf392aa985d35e99ae22756762607f974"
+  "templateSha": "0cf8b8df105daa9b81714bbf3fa0e93ec1d64255"
 }
